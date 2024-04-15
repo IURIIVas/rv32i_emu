@@ -1,1 +1,3 @@
-# rv32i_emu
+rv32i_emu
+---------
+RISC V base integer instruction asm emulator
