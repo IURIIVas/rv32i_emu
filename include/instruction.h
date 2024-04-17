@@ -17,6 +17,13 @@ typedef enum instruction_type_e {
         EBREAK = 0b1110011
 } instruction_type_e;
 
+typedef enum r_type_instruction_e {
+        ADD = 0x0,
+        SUB = 0x200
+
+
+} r_type_instruction_e;
+
 typedef struct instruction_s {
         uint8_t opcode;
         uint8_t rd;
