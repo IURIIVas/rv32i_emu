@@ -24,10 +24,17 @@
  *       +---------------+
 */
 
+typedef enum data_size_e {
+        BYTE = 8,
+        HALF_WORD = 16,
+        WORD = 32
+} data_size_e;
+
 typedef struct ram_s {
         uint8_t mem[RAM_SIZE_BYTES];
 } ram_s;
 
-void ram_load_program(ram_s *);
+uint32_t ram_load(ram_s *ram, uint32_t addr, data_size_e size);
+void dram_store(ram_s *ram, uint32_t addr, data_size_e size, uint32_t value);
 
 #endif 

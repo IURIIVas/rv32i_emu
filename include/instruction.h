@@ -19,9 +19,15 @@ typedef enum instruction_type_e {
 
 typedef enum r_type_instruction_e {
         ADD = 0x0,
-        SUB = 0x200
-
-
+        SUB = 0x200,
+        XOR = 0x4,
+        OR = 0x6,
+        AND = 0x7,
+        SLL = 0x1,
+        SRL = 0x5,
+        SRA = 0x205,
+        SLT = 0x2,
+        SLTU = 0x3
 } r_type_instruction_e;
 
 typedef struct instruction_s {
