@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 void file_parse(int fd, uint32_t *instruction_arr);
-uint32_t instruction_parse(char *inst);
+uint32_t instruction_parse(char *instr);
 
 #endif

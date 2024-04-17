@@ -2,6 +2,7 @@
 #define _RAM_H_
 
 #include <stdint.h>
+#include <stddef.h>
 
 #define RAM_SIZE_BYTES        (0x100000)
 #define RAM_START_ADDR        (0x80000000)
@@ -36,5 +37,7 @@ typedef struct ram_s {
 
 uint32_t ram_load(ram_s *ram, uint32_t addr, data_size_e size);
 void dram_store(ram_s *ram, uint32_t addr, data_size_e size, uint32_t value);
+uint32_t instruction_load(ram_s *ram, uint32_t addr);
+void instructions_store(ram_s *ram, uint32_t *instructions, size_t instructions_num);
 
 #endif 

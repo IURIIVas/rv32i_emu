@@ -13,7 +13,7 @@ typedef struct cpu_s {
         ram_s *ram;
 } cpu_s;
 
-instruction_s instruction_decode(uint32_t inst);
-uint32_t instruction_code(instruction_s *inst, instruction_type_e inst_type);
+void cpu_init(cpu_s *cpu, ram_s *ram);
+void cpu_start(cpu_s *cpu);
 
 #endif 

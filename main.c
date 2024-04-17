@@ -2,8 +2,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "include/ram.h"
-#include "include/parser.h"
+#include "ram.h"
+#include "parser.h"
+#include "cpu.h"
 
 uint32_t instructions[(RAM_DATA_ADDR - RAM_INSTRUCTION_ADDR) / 4];
 
@@ -21,4 +22,15 @@ int main(int argc, char *argv[])
         // }
 
         file_parse(4, instructions);
+
+        ram_s ram;
+        cpu_s cpu;
+        cpu_init(&cpu, &ram);
+        instructions_store(cpu.ram, instructions, 3);
+
+        cpu_start(&cpu);
+
+        printf("t0: %d, t1: %d\n", cpu.gpr[T0], cpu.gpr[T1]);
+
+        return 0;
 }

@@ -1,4 +1,5 @@
 #include "ram.h"
+#include <stddef.h>
 
 static uint8_t _ram_load_byte(ram_s *ram, uint32_t addr)
 {
@@ -74,4 +75,16 @@ uint32_t ram_load(ram_s *ram, uint32_t addr, data_size_e size)
         }
 
         return data_load;
+}
+
+uint32_t instruction_load(ram_s *ram, uint32_t addr)
+{
+        return ram_load(ram, addr, WORD);
+}
+
+void instructions_store(ram_s *ram, uint32_t *instrs, size_t insts_num)
+{
+        for (size_t i = 0; i < insts_num; i++) {
+                _ram_store_word(ram, RAM_INSTRUCTION_ADDR + (i * 4), instrs[i]);
+        }
 }

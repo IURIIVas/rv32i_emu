@@ -30,10 +30,14 @@ typedef enum r_type_instruction_e {
         SLTU = 0x3
 } r_type_instruction_e;
 
+typedef enum i_type_instruction_e {
+        ADDI = 0x0
+} i_type_instruction_e;
+
 typedef struct instruction_s {
         uint8_t opcode;
         uint8_t rd;
-        uint8_t fucnt_3;
+        uint8_t funct_3;
         uint8_t rs1;
         uint8_t rs2;
         uint8_t funct_7;
