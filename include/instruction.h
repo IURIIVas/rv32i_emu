@@ -31,7 +31,15 @@ typedef enum r_type_instruction_e {
 } r_type_instruction_e;
 
 typedef enum i_type_instruction_e {
-        ADDI = 0x0
+        ADDI = 0x0,
+        XORI = 0x4,
+        ORI = 0x6,
+        ANDI = 0x7,
+        SLLI = 0x1,
+        SRLI = 0x5,
+        SRAI = 0x205,
+        SLTI = 0x2,
+        SLTUI = 0x3
 } i_type_instruction_e;
 
 typedef struct instruction_s {

@@ -7,23 +7,158 @@
 *         INSTRUCTION IMPLEMENTATION
 *  ===========================================
 */ 
-static void _addi_exec(cpu_s *cpu, instruction_s *instr)
-{
-        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] + (int32_t) instr->imm);
-        printf("addi\n");
-}
-
 static void _add_exec(cpu_s *cpu, instruction_s *instr)
 {
         cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] + (int32_t) cpu->gpr[instr->rs2]);
+        #ifdef DEBUG
         printf("add\n");
+        #endif
 }
 
 static void _sub_exec(cpu_s *cpu, instruction_s *instr)
 {
         cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] - (int32_t) cpu->gpr[instr->rs2]);
+        #ifdef DEBUG
         printf("sub\n");
+        #endif
 }
+
+static void _xor_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] ^ cpu->gpr[instr->rs2];
+        #ifdef DEBUG
+        printf("xor\n");
+        #endif
+}
+
+static void _or_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] | cpu->gpr[instr->rs2];
+        #ifdef DEBUG
+        printf("or\n");
+        #endif
+}
+
+static void _and_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] & cpu->gpr[instr->rs2];
+        #ifdef DEBUG
+        printf("and\n");
+        #endif
+}
+
+static void _sll_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] << cpu->gpr[instr->rs2];
+        #ifdef DEBUG
+        printf("sl\n");
+        #endif
+}
+
+static void _srl_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] >> cpu->gpr[instr->rs2];
+        #ifdef DEBUG
+        printf("srl\n");
+        #endif
+}
+
+static void _sra_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] >> (int32_t) cpu->gpr[instr->rs2]);
+        #ifdef DEBUG
+        printf("sra\n");
+        #endif
+}
+
+static void _slt_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] =  ((int32_t) cpu->gpr[instr->rs1] < (int32_t) cpu->gpr[instr->rs2]) ? 1 : 0;
+        #ifdef DEBUG
+        printf("slt\n");
+        #endif
+}
+
+static void _sltu_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] =  ((uint32_t) cpu->gpr[instr->rs1] < (uint32_t) cpu->gpr[instr->rs2]) ? 1 : 0;
+        #ifdef DEBUG
+        printf("sltu\n");
+        #endif
+}
+
+static void _addi_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] + (int32_t) instr->imm);
+        #ifdef DEBUG
+        printf("addi\n");
+        #endif
+}
+
+static void _xori_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] ^ instr->imm;
+        #ifdef DEBUG
+        printf("xori\n");
+        #endif
+}
+
+static void _ori_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] | instr->imm;
+        #ifdef DEBUG
+        printf("ori\n");
+        #endif
+}
+
+static void _andi_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] & instr->imm;
+        #ifdef DEBUG
+        printf("ori\n");
+        #endif
+}
+
+static void _slli_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] << (instr->imm & 0x1f);
+        #ifdef DEBUG
+        printf("slli\n");
+        #endif
+}
+
+static void _srli_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] >> (instr->imm & 0x1f);
+        #ifdef DEBUG
+        printf("srli\n");
+        #endif
+}
+
+static void _srai_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] >> (int32_t) (instr->imm & 0x1f));
+        #ifdef DEBUG
+        printf("srai\n");
+        #endif
+}
+
+static void _slti_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (cpu->gpr[instr->rs1] < instr->imm) ? 1 : 0;
+        #ifdef DEBUG
+        printf("slti\n");
+        #endif
+}
+
+static void _sltui_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = ((uint32_t) cpu->gpr[instr->rs1] < (uint32_t) instr->imm) ? 1 : 0;
+        #ifdef DEBUG
+        printf("sltui\n");
+        #endif
+}
+
 
 /* ===========================================
 *                 CPU STAGES
@@ -40,15 +175,64 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                         break;
                                 case SUB:
                                         _sub_exec(cpu, instr);
+                                        break;
+                                case XOR:
+                                        _xor_exec(cpu, instr);
+                                        break;
+                                case OR:
+                                        _or_exec(cpu, instr);
+                                        break;
+                                case AND:
+                                        _and_exec(cpu, instr);
+                                        break;
+                                case SLL:
+                                        _sll_exec(cpu, instr);
+                                        break;
+                                case SRL:
+                                        _srl_exec(cpu, instr);
+                                        break;
+                                case SRA:
+                                        _sra_exec(cpu, instr);
+                                        break;
+                                case SLT:
+                                        _slt_exec(cpu, instr);
+                                        break;
+                                case SLTU:
+                                        _sltu_exec(cpu, instr);
+                                        break;
                                 default:
                                         break;
                                 }
                                 break;
                 case I_TYPE:
-                        i_type_instruction_e i_type_instr = instr->funct_3;
+                        i_type_instruction_e i_type_instr = ((instr->imm >> 5) & 0x7f) << 4 | (instr->funct_3);
                         switch (i_type_instr) {
                                 case ADDI:
                                         _addi_exec(cpu, instr);
+                                        break;
+                                case XORI:
+                                        _xori_exec(cpu, instr);
+                                        break;
+                                case ORI:
+                                        _ori_exec(cpu, instr);
+                                        break;
+                                case ANDI:
+                                        _andi_exec(cpu, instr);
+                                        break;
+                                case SLLI:
+                                        _slli_exec(cpu, instr);
+                                        break;
+                                case SRLI:
+                                        _srli_exec(cpu, instr);
+                                        break;
+                                case SRAI:
+                                        _srai_exec(cpu, instr);
+                                        break;
+                                case SLTI:
+                                        _slti_exec(cpu, instr);
+                                        break;
+                                case SLTUI:
+                                        _sltui_exec(cpu, instr);
                                         break;
                                 
                                 default:
