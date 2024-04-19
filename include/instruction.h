@@ -42,6 +42,29 @@ typedef enum i_type_instruction_e {
         SLTUI = 0x3
 } i_type_instruction_e;
 
+typedef enum load_type_instruction_e {
+        LB = 0x0,
+        LH = 0x1,
+        LW = 0x2,
+        LBU = 0x4,
+        LHU = 0x5
+} load_type_instruction_e;
+
+typedef enum s_type_instruction_e {
+        SB = 0x0,
+        SH = 0x1,
+        SW = 0x2
+} s_type_instruction_e;
+
+typedef enum b_type_instruction_e {
+        BEQ = 0x0,
+        BNE = 0x1,
+        BLT = 0x4,
+        BGE = 0x5,
+        BLTU = 0x6,
+        BGEU = 0x7
+} b_type_instruction_e;
+
 typedef struct instruction_s {
         uint8_t opcode;
         uint8_t rd;

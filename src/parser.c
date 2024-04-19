@@ -28,6 +28,33 @@ static uint32_t _instruction_code(instruction_s *instr, instruction_type_e inst_
                 instruction |= (instr->rs1 & 0x1f) << 15;
                 instruction |= (instr->imm & 0xfff) << 20;
                 break;
+        case S_TYPE:
+                instruction |= (instr->funct_3 & 0x7) << 12;
+                instruction |= (instr->rs1 & 0x1f) << 15;
+                instruction |= (instr->rs2 & 0x1f) << 20;
+                uint32_t imm0 = (instr->imm & 0x1f) << 7;
+                uint32_t imm1 = ((instr->imm >> 5) & 0x7f) << 25;
+                instruction |= (imm0 | imm1);
+                break;
+        case B_TYPE:
+                instruction |= (instr->funct_3 & 0x7) << 12;
+                instruction |= (instr->rs1 & 0x1f) << 15;
+                instruction |= (instr->rs2 & 0x1f) << 20;
+                uint32_t imm0 = ((instr->imm >> 1) & 0xf) << 8;
+                uint32_t imm1 = ((instr->imm >> 5) & 0x3f) << 25;
+                uint32_t imm2 = ((instr->imm >> 11) & 0x1) << 7;
+                uint32_t imm3 = ((instr->imm >> 12) & 0x1) << 30;
+                instruction |= (imm0 | imm1 | imm2 | imm3);
+                break;
+        case JAL:
+                instruction |= (instr->rd & 0x1f) << 7;
+                instruction |= (instr->imm & 0xfffff) << 12;
+                break;
+        case LUI:
+        case AUIPC:
+                instruction |= (instr->rd & 0x1f) << 7;
+                instruction |= (instr->imm & 0xfffff) << 12;
+                break;
         default:
                 break;
         }

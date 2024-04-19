@@ -159,6 +159,182 @@ static void _sltui_exec(cpu_s *cpu, instruction_s *instr)
         #endif
 }
 
+static void _lb_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (int32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), BYTE);
+        
+        #ifdef DEBUG
+        printf("lb\n");
+        #endif
+}
+
+static void _lh_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (int32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), HALF_WORD);
+        
+        #ifdef DEBUG
+        printf("lh\n");
+        #endif
+}
+
+static void _lw_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (int32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), WORD);
+        
+        #ifdef DEBUG
+        printf("lw\n");
+        #endif
+}
+
+static void _lbu_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (uint32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), BYTE);
+        
+        #ifdef DEBUG
+        printf("lbu\n");
+        #endif
+}
+
+static void _lhu_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = (uint32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), HALF_WORD);
+        
+        #ifdef DEBUG
+        printf("lhu\n");
+        #endif
+}
+
+static void _sb_exec(cpu_s *cpu, instruction_s *instr)
+{
+        ram_store(cpu->ram, (instr->rs1 + instr->imm), BYTE, instr->rs2);
+
+        #ifdef DEBUG
+        printf("sb\n");
+        #endif
+}
+
+static void _sh_exec(cpu_s *cpu, instruction_s *instr)
+{
+        ram_store(cpu->ram, (instr->rs1 + instr->imm), HALF_WORD, instr->rs2);
+
+        #ifdef DEBUG
+        printf("sh\n");
+        #endif
+}
+
+static void _sw_exec(cpu_s *cpu, instruction_s *instr)
+{
+        ram_store(cpu->ram, (instr->rs1 + instr->imm), WORD, instr->rs2);
+
+        #ifdef DEBUG
+        printf("sw\n");
+        #endif
+}
+
+static void _beq_exec(cpu_s *cpu, instruction_s *instr)
+{
+        if ((int32_t) instr->rs1 == (int32_t) instr->rs2) {
+                cpu->pc += instr->imm;
+        }
+
+        #ifdef DEBUG
+        printf("beq\n");
+        #endif
+}
+
+static void _bne_exec(cpu_s *cpu, instruction_s *instr)
+{
+        if ((int32_t) instr->rs1 != (int32_t) instr->rs2) {
+                cpu->pc += (int32_t) instr->imm;
+        }
+
+        #ifdef DEBUG
+        printf("beq\n");
+        #endif
+}
+
+static void _blt_exec(cpu_s *cpu, instruction_s *instr)
+{
+        if ((int32_t) instr->rs1 < (int32_t) instr->rs2) {
+                cpu->pc += (int32_t) instr->imm;
+        }
+
+        #ifdef DEBUG
+        printf("blt\n");
+        #endif
+}
+
+static void _bge_exec(cpu_s *cpu, instruction_s *instr)
+{
+        if ((int32_t) instr->rs1 >= (int32_t) instr->rs2) {
+                cpu->pc += (int32_t) instr->imm;
+        }
+
+        #ifdef DEBUG
+        printf("bge\n");
+        #endif
+}
+
+static void _bltu_exec(cpu_s *cpu, instruction_s *instr)
+{
+        if ((uint32_t) instr->rs1 < (uint32_t) instr->rs2) {
+                cpu->pc += (int32_t) instr->imm;
+        }
+
+        #ifdef DEBUG
+        printf("bltu\n");
+        #endif
+}
+
+static void _bgeu_exec(cpu_s *cpu, instruction_s *instr)
+{
+        if ((uint32_t) instr->rs1 >= (uint32_t) instr->rs2) {
+                cpu->pc += (int32_t) instr->imm;
+        }
+
+        #ifdef DEBUG
+        printf("bgeu\n");
+        #endif
+}
+
+static void _jal_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->pc + 4;
+        cpu->pc += (int32_t) instr->imm;
+
+        #ifdef DEBUG
+        printf("jal\n");
+        #endif
+}
+
+static void _jalr_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->pc + 4;
+        cpu->pc = (int32_t) instr->rs1 + (int32_t) instr->imm;
+
+        #ifdef DEBUG
+        printf("jalr\n");
+        #endif
+}
+
+static void _lui_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = instr->imm << 12;
+
+        #ifdef DEBUG
+        printf("lui\n");
+        #endif
+}
+
+static void _auipc_exec(cpu_s *cpu, instruction_s *instr)
+{
+        cpu->gpr[instr->rd] = cpu->pc + (instr->imm << 12);
+
+        #ifdef DEBUG
+        printf("auipc\n");
+        #endif
+}
+
 
 /* ===========================================
 *                 CPU STAGES
@@ -202,8 +378,8 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                         break;
                                 default:
                                         break;
-                                }
-                                break;
+                        }
+                        break;
                 case I_TYPE:
                         i_type_instruction_e i_type_instr = ((instr->imm >> 5) & 0x7f) << 4 | (instr->funct_3);
                         switch (i_type_instr) {
@@ -238,6 +414,69 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                 default:
                                         break;
                         }
+                        break;
+                case LOAD:
+                        load_type_instruction_e load_type_instruction = instr->funct_3;
+                        switch (load_type_instruction)
+                        {
+                        case LB:
+                                _lb_exec(cpu, instr);
+                                break;
+                        case LH:
+                                _lh_exec(cpu, instr);
+                                break;
+                        case LW:
+                                _lw_exec(cpu, instr);
+                                break;
+                        case LBU:
+                                _lbu_exec(cpu, instr);
+                                break;
+                        case LHU:
+                                _lhu_exec(cpu, instr);
+                                break;
+                        default:
+                                break;
+                        }
+                        break;
+                case B_TYPE:
+                        b_type_instruction_e b_type_instruction = instr->funct_3;
+                        switch (b_type_instruction)
+                        {
+                        case BEQ:
+                                _beq_exec(cpu, instr);
+                                break;
+                        case BNE:
+                                _bne_exec(cpu, instr);
+                                break;
+                        case BLT:
+                                _blt_exec(cpu, instr);
+                                break;
+                        case BGE:
+                                _bge_exec(cpu, instr);
+                                break;
+                        case BLTU:
+                                _bltu_exec(cpu, instr);
+                                break;
+                        case BGEU:
+                                _bgeu_exec(cpu, instr);
+                                break;
+                        
+                        default:
+                                break;
+                        }
+                        break;
+                case JAL:
+                        _jal_exec(cpu, instr);
+                        break;
+                case JALR:
+                        _jalr_exec(cpu, instr);
+                        break;
+                case LUI:
+                        _lui_exec(cpu, instr);
+                        break;
+                case AUIPC:
+                        _auipc_exec(cpu, instr);
+                        break;
                 default:
                         break;
         }
@@ -285,7 +524,15 @@ static instruction_s _instruction_decode(uint32_t instr)
                 decoded_instr.funct_7 = 0;
                 decoded_instr.imm = (((instr >> 30) & 0x1) << 12) | (((instr >> 7) & 0x1) << 11) | (((instr >> 25) & 0x3f) << 5) | (((instr >> 8) & 0xf) << 1);
                 break;
-
+        case JAL:
+                decoded_instr.rd = (instr >> 7) & 0x1f;
+                decoded_instr.imm = (((instr >> 20) & 0x1) << 20) | (((instr >> 12) & 0xff) << 12) | (((instr >> 9) & 0x1) << 11) | (((instr >> 10) & 0x3f) << 1);
+                break;
+        case LUI:
+        case AUIPC:
+                decoded_instr.rd = (instr >> 7) & 0x1f;
+                decoded_instr.imm = (instr >> 12) & 0xfffff;
+                break;
         default:
                 break;
         }

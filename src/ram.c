@@ -39,7 +39,7 @@ static void _ram_store_word(ram_s *ram, uint32_t addr, uint32_t value)
     ram->mem[addr - RAM_START_ADDR + 3] = (uint8_t) ((value >> 24) & 0xff);
 }
 
-void dram_store(ram_s *ram, uint32_t addr, data_size_e size, uint32_t value) 
+void ram_store(ram_s *ram, uint32_t addr, data_size_e size, uint32_t value) 
 {
     switch (size) {
         case BYTE:  
