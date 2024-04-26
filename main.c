@@ -69,18 +69,12 @@ static void _mem_print(cpu_s *cpu)
 
 int main(int argc, char *argv[])
 {
-        // if (argc < 2) {
-        //         printf("Usage: ./riscv_emu *file_path*\n");
-        //         return -1;
-        // }
+        if (argc < 2) {
+                printf("Usage: ./riscv_emu *file_path*\n");
+                return -1;
+        }
 
-        // int asm_fd = open(argv[1], O_RDONLY);
-        // if (asm_fd == -1) {
-        //         printf("Err while open file\n");
-        //         return -2;
-        // }
-
-        file_parse(4, instructions);
+        file_parse(argv[1], instructions);
 
         ram_s ram;
         cpu_s cpu;

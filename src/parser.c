@@ -4,10 +4,12 @@
 #include <malloc.h>
 
 #include "cpu.h"
+#include "instruction.h"
 
 static uint32_t _instruction_code(instruction_s *instr, instruction_type_e inst_type)
 {
         uint32_t instruction = 0;
+        uint32_t imm0, imm1, imm2, imm3;
         instruction |= (inst_type & 0x3f) << 0;
         
         switch (inst_type)
@@ -32,18 +34,18 @@ static uint32_t _instruction_code(instruction_s *instr, instruction_type_e inst_
                 instruction |= (instr->funct_3 & 0x7) << 12;
                 instruction |= (instr->rs1 & 0x1f) << 15;
                 instruction |= (instr->rs2 & 0x1f) << 20;
-                uint32_t imm0 = (instr->imm & 0x1f) << 7;
-                uint32_t imm1 = ((instr->imm >> 5) & 0x7f) << 25;
+                imm0 = (instr->imm & 0x1f) << 7;
+                imm1 = ((instr->imm >> 5) & 0x7f) << 25;
                 instruction |= (imm0 | imm1);
                 break;
         case B_TYPE:
                 instruction |= (instr->funct_3 & 0x7) << 12;
                 instruction |= (instr->rs1 & 0x1f) << 15;
                 instruction |= (instr->rs2 & 0x1f) << 20;
-                uint32_t imm0 = ((instr->imm >> 1) & 0xf) << 8;
-                uint32_t imm1 = ((instr->imm >> 5) & 0x3f) << 25;
-                uint32_t imm2 = ((instr->imm >> 11) & 0x1) << 7;
-                uint32_t imm3 = ((instr->imm >> 12) & 0x1) << 30;
+                imm0 = ((instr->imm >> 1) & 0xf) << 8;
+                imm1 = ((instr->imm >> 5) & 0x3f) << 25;
+                imm2 = ((instr->imm >> 11) & 0x1) << 7;
+                imm3 = ((instr->imm >> 12) & 0x1) << 30;
                 instruction |= (imm0 | imm1 | imm2 | imm3);
                 break;
         case JAL:
@@ -82,13 +84,34 @@ static uint32_t _instruction_parse(char *instr)
         return 1;
 }
 
-void file_parse(int fd, uint32_t *instruction_arr)
+void file_parse(char *filename, uint32_t *instruction_arr)
 {
-        instruction_s first_instr = {.opcode=I_TYPE, .funct_3=0, .rd=T0, .rs1=ZERO, .imm=3};
-        instruction_s second_instr = {.opcode=I_TYPE, .funct_3=0, .rd=T1, .rs1=ZERO, .imm=2};
-        instruction_s third_instr = {.opcode=R_TYPE, .funct_3=0, .funct_7=0, .rd=T0, .rs1=T0, .rs2=T1};
-        
-        instruction_arr[0] = _instruction_code(&first_instr, I_TYPE);
-        instruction_arr[1] = _instruction_code(&second_instr, I_TYPE);
-        instruction_arr[2] = _instruction_code(&third_instr, R_TYPE);
+        FILE *file;
+        uint32_t file_len;
+
+        file = fopen(filename, "rb");
+        if (!file) {
+                fprintf(stderr, "Unable to open file %s", filename);
+        }
+
+        fseek(file, 0, SEEK_END);
+        file_len = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+
+        uint8_t *buffer=(uint8_t *)malloc(file_len + 1);
+        fread(buffer, file_len, 1, file);
+        fclose(file);
+
+
+        for (int i=0; i<file_len; i+=2) {
+                if (i%16==0) {
+                        printf("\n%.8x: ", i);
+                }
+                printf("%02x%02x ", *(buffer+i), *(buffer+i+1));
+        }
+        printf("\n");
+
+        memcpy(instruction_arr, buffer, file_len * sizeof(uint8_t));
+        free(buffer);
 }
