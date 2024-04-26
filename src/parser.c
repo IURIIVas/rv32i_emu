@@ -64,26 +64,6 @@ static uint32_t _instruction_code(instruction_s *instr, instruction_type_e inst_
         return instruction;
 }
 
-static uint32_t _instruction_parse(char *instr) 
-{
-        char *inst_mnemonic = (char *) malloc(15 * sizeof(char));
-        size_t inst_mnem_idx = 0;
-        uint8_t inst_mnemonic_readed = 0;
-
-        while (*instr) {
-                while ((*instr) == ' ' || (*instr) == '\t') {
-                        instr++;
-                }
-                while (((*instr) != ' ' || (*instr) != '\t') && !inst_mnemonic_readed) {
-                        inst_mnemonic[inst_mnem_idx++] = (*instr++);
-                }
-                inst_mnemonic_readed = 1;
-                instr++;
-        }
-
-        return 1;
-}
-
 void file_parse(char *filename, uint32_t *instruction_arr)
 {
         FILE *file;
@@ -99,18 +79,9 @@ void file_parse(char *filename, uint32_t *instruction_arr)
         fseek(file, 0, SEEK_SET);
 
 
-        uint8_t *buffer=(uint8_t *)malloc(file_len + 1);
+        uint8_t *buffer = (uint8_t *)malloc(file_len + 1);
         fread(buffer, file_len, 1, file);
         fclose(file);
-
-
-        for (int i=0; i<file_len; i+=2) {
-                if (i%16==0) {
-                        printf("\n%.8x: ", i);
-                }
-                printf("%02x%02x ", *(buffer+i), *(buffer+i+1));
-        }
-        printf("\n");
 
         memcpy(instruction_arr, buffer, file_len * sizeof(uint8_t));
         free(buffer);

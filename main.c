@@ -48,25 +48,6 @@ static void _regmap_print(cpu_s *cpu)
         printf("| %-15s: %13d | %13x | %13o |\n", "T6(X31)", cpu->gpr[T6], cpu->gpr[T6], cpu->gpr[T6]);
 }
 
-static void _mem_print(cpu_s *cpu)
-{
-        uint32_t bytes_used = cpu->gpr[SP] - RAM_DATA_ADDR;
-        uint32_t words_used = bytes_used / 4;
-        words_used += (words_used % 4) ? 1 : 0;
-
-        if (bytes_used != 0) {
-                printf("==================================================================\n");
-                printf("                         USED MEMORY MAP                          \n");
-                printf("==================================================================\n");
-                printf("| %-15s: %13s |\n", "ADDR", "DATA");
-
-                for (size_t i = 0; i < words_used; i++) {
-                        printf("| %15x: %13x |\n", (uint32_t) (RAM_DATA_ADDR + (i * 4)), ram_load(cpu->ram, RAM_DATA_ADDR + (i * 4), WORD));
-                }
-        }
-
-}
-
 int main(int argc, char *argv[])
 {
         if (argc < 2) {
@@ -84,7 +65,6 @@ int main(int argc, char *argv[])
         cpu_start(&cpu);
 
         _regmap_print(&cpu);
-        _mem_print(&cpu);
 
         return 0;
 }
