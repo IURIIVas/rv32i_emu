@@ -3,6 +3,6 @@
 
 #include <stdint.h>
 
-void file_parse(char *filename, uint32_t *instruction_arr);
+size_t file_parse(char *filename, uint32_t *instruction_arr);
 
 #endif

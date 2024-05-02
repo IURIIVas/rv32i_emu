@@ -465,6 +465,23 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                 break;
                         }
                         break;
+                case S_TYPE:
+                        s_type_instruction_e s_type_instruction = instr->funct_3;
+                        switch (s_type_instruction)
+                        {
+                        case SB:
+                                _sb_exec(cpu, instr);
+                                break;
+                        case SH:
+                                _sh_exec(cpu, instr);
+                                break;
+                        case SW:
+                                _sw_exec(cpu, instr);
+                                break;
+                        default:
+                                break;
+                        }
+                        break;
                 case JAL:
                         _jal_exec(cpu, instr);
                         break;

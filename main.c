@@ -55,12 +55,12 @@ int main(int argc, char *argv[])
                 return -1;
         }
 
-        file_parse(argv[1], instructions);
+        size_t instr_num = file_parse(argv[1], instructions);
 
         ram_s ram;
         cpu_s cpu;
         cpu_init(&cpu, &ram);
-        instructions_store(cpu.ram, instructions, 3);
+        instructions_store(cpu.ram, instructions, instr_num);
 
         cpu_start(&cpu);
 

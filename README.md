@@ -16,7 +16,7 @@ Pass the path to the binary file as the first argument to run
 
 To compile riscv asembly to binary file
 ```
-riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -o "path/to/output" "path/to/file.s"
+riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -nostdlib -Ttext=0x0 -o "path/to/output" "path/to/file.s"
 riscv64-unknown-elf-objcopy -O binary "path/to/output" "path/to/output.bin"
 ```
 Run emulator
