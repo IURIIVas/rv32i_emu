@@ -577,6 +577,7 @@ void cpu_start(cpu_s *cpu)
                 uint32_t instr = instruction_load(cpu->ram, cpu->pc);
                 if (0 == instr) {
                         printf("EOF\n");
+                        printf("PC: %x\n", cpu->pc);
                         break;
                 }
                 cpu->pc += 4;
