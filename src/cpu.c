@@ -576,8 +576,10 @@ void cpu_start(cpu_s *cpu)
                 cpu->gpr[ZERO] = 0x0;
                 uint32_t instr = instruction_load(cpu->ram, cpu->pc);
                 if (0 == instr) {
+#ifdef DEBUG
                         printf("EOF\n");
                         printf("PC: %x\n", cpu->pc);
+#endif
                         break;
                 }
                 cpu->pc += 4;

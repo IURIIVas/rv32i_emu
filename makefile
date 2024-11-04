@@ -1,6 +1,6 @@
 IDIR=include
 CC=gcc
-CFLAGS=-g3 -I$(IDIR) -Wall -DDEBUG
+CFLAGS=-g3 -I$(IDIR) -Wall
 
 ODIR=obj
 SRCDIR=src
@@ -39,10 +39,10 @@ test_rtype: $(OBJ) $(UNITY_OBJ) $(ODIR)/test_rtype_instr.o
 test_itype: $(OBJ) $(UNITY_OBJ) $(ODIR)/test_itype_instr.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-riscv_emu: $(OBJ) main.o
+riscv_emu: $(OBJ) $(ODIR)/main.o
 	$(CC) $(CFLAGS) -o $@ $^  $(LIBS)
 
 .PHONY: clean
 
 clean:
-	-rm -f $(ODIR)/*.o *~ riscv_emu $(INCDIR)/*~ 
+	-rm -f $(ODIR)/*.o *~ riscv_emu test_* $(INCDIR)/*~ 

@@ -54,3 +54,5 @@ dkms.conf
 riscv_emu
 test_*
 !test_*.c
+
+.*
