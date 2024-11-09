@@ -11,7 +11,7 @@ cpu_s cpu;
 
 void setUp(void)
 {
-        for (size_t reg; reg < REGS_NUM; reg++) {
+        for (size_t reg = 0; reg < REGS_NUM; reg++) {
                 cpu.gpr[reg] = 0;
         }
         cpu_init(&cpu, &ram);

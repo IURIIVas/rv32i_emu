@@ -6,7 +6,7 @@
 #include "cpu.h"
 #include "instruction.h"
 
-size_t file_parse(char *filename, uint32_t *instruction_arr)
+size_t file_parse(char *filename, uint32_t *restrict instruction_arr)
 {
         FILE *file;
         uint32_t file_len;
@@ -21,7 +21,7 @@ size_t file_parse(char *filename, uint32_t *instruction_arr)
         fseek(file, 0, SEEK_SET);
 
 
-        uint8_t *buffer = (uint8_t *)malloc(file_len + 1);
+        uint8_t *restrict buffer = (uint8_t *)malloc(file_len + 1);
         fread(buffer, file_len, 1, file);
         fclose(file);
 
