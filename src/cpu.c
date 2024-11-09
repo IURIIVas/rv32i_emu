@@ -49,7 +49,7 @@ static void _and_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _sll_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] << cpu->gpr[instr->rs2];
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] << (cpu->gpr[instr->rs2] & 0x1f);
         #ifdef DEBUG
         printf("sl\n");
         #endif
@@ -57,7 +57,7 @@ static void _sll_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _srl_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] >> cpu->gpr[instr->rs2];
+        cpu->gpr[instr->rd] = cpu->gpr[instr->rs1] >> (cpu->gpr[instr->rs2] & 0x1f);
         #ifdef DEBUG
         printf("srl\n");
         #endif
@@ -65,7 +65,13 @@ static void _srl_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _sra_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] >> (int32_t) cpu->gpr[instr->rs2]);
+        uint32_t rs_1 = cpu->gpr[instr->rs1];
+        uint32_t rs_2 = cpu->gpr[instr->rs2];
+        uint8_t rs_1_sign_bit = (rs_1 >> 31) & 1;
+        
+        uint32_t rd = (rs_1 >> (rs_2 & 0x1f)) | rs_1_sign_bit << 31; 
+
+        cpu->gpr[instr->rd] = rd;
         #ifdef DEBUG
         printf("sra\n");
         #endif

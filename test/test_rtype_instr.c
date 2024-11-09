@@ -6,6 +6,8 @@
 #include "ram.h"
 #include "regmap.h"
 
+#define MAX_NUM   (2147483648)
+
 ram_s ram;
 cpu_s cpu;
 
@@ -43,16 +45,26 @@ void test_add_instr()
 {      
         uint32_t instr = (S0 << 20) | (S1 << 15) | (S0 << 7) | R_TYPE;
         uint32_t instructions[] = {instr};
+        uint8_t neg = 0;
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
-                uint32_t res = cpu.gpr[S1] + cpu.gpr[S0];
+                uint32_t num_s1 = rand();
+                uint32_t num_s0 = rand();
+
+                if (neg) {
+                        num_s0 |= 1 << 31;
+                }
+                
+                cpu.gpr[S0] = num_s0;
+                cpu.gpr[S1] = num_s1;
+
+                uint32_t res = num_s0 + num_s1;
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
                 cpu_start(&cpu);
-
+                
+                neg ^= 1;
                 TEST_ASSERT_EQUAL(res, cpu.gpr[S0]);
         }
 }
@@ -64,16 +76,26 @@ void test_sub_instr()
 {      
         uint32_t instr = ((SUB >> 4) << 25) | (S0 << 20) | (S1 << 15) | ((SUB & 0x7) << 12) | (S0 << 7) | R_TYPE;
         uint32_t instructions[] = {instr};
+        uint8_t neg = 0;
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
+                uint32_t num_s1 = rand();
+                uint32_t num_s0 = rand();
+
+                if (neg) {
+                        num_s0 |= 1 << 31;
+                }
+                
+                cpu.gpr[S0] = num_s0;
+                cpu.gpr[S1] = num_s1;
+
                 uint32_t res = cpu.gpr[S1] - cpu.gpr[S0];
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
                 cpu_start(&cpu);
 
+                neg ^= 1;
                 TEST_ASSERT_EQUAL(res, cpu.gpr[S0]);
         }
 }
@@ -87,8 +109,8 @@ void test_xor_instr()
         uint32_t instructions[] = {instr};
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
+                cpu.gpr[S0] = (uint32_t) rand();
+                cpu.gpr[S1] = (uint32_t) rand();
                 uint32_t res = cpu.gpr[S1] ^ cpu.gpr[S0];
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
@@ -108,8 +130,8 @@ void test_or_instr()
         uint32_t instructions[] = {instr};
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
+                cpu.gpr[S0] = (uint32_t) rand();
+                cpu.gpr[S1] = (uint32_t) rand();
                 uint32_t res = cpu.gpr[S1] | cpu.gpr[S0];
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
@@ -129,8 +151,8 @@ void test_and_instr()
         uint32_t instructions[] = {instr};
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
+                cpu.gpr[S0] = (uint32_t) rand();
+                cpu.gpr[S1] = (uint32_t) rand();
                 uint32_t res = cpu.gpr[S1] & cpu.gpr[S0];
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
@@ -152,7 +174,7 @@ void test_sll_instr()
         for (size_t i = 0; i < 100; i++) {
                 cpu.gpr[S0] = (uint32_t) rand();
                 cpu.gpr[S1] = (uint32_t) rand();
-                uint32_t res = cpu.gpr[S1] << cpu.gpr[S0];
+                uint32_t res = cpu.gpr[S1] << (cpu.gpr[S0] & 0x1f);
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
@@ -173,7 +195,7 @@ void test_srl_instr()
         for (size_t i = 0; i < 100; i++) {
                 cpu.gpr[S0] = (uint32_t) rand();
                 cpu.gpr[S1] = (uint32_t) rand();
-                uint32_t res = cpu.gpr[S1] >> cpu.gpr[S0];
+                uint32_t res = cpu.gpr[S1] >> (cpu.gpr[S0] & 0x1f);
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
@@ -190,16 +212,27 @@ void test_sra_instr()
 {      
         uint32_t instr = ((SRA >> 4) << 25) | (S0 << 20) | (S1 << 15) | ((SRA & 0x7) << 12) | (S0 << 7) | R_TYPE;
         uint32_t instructions[] = {instr};
+        uint8_t neg = 0;
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
-                uint32_t res = cpu.gpr[S1] >> cpu.gpr[S0];
+                uint32_t num_s1 = rand();
+                uint32_t num_s0 = rand();
+
+                if (neg) {
+                        num_s1 |= 1 << 31;
+                }
+                
+                cpu.gpr[S0] = num_s0;
+                cpu.gpr[S1] = num_s1;
+                uint8_t sign_bit = num_s1 >> 31 & 1;
+
+                uint32_t res = (cpu.gpr[S1] >> (cpu.gpr[S0] & 0x1f)) | (sign_bit << 31);
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
                 cpu_start(&cpu);
 
+                neg ^= 1;
                 TEST_ASSERT_EQUAL(res, cpu.gpr[S0]);
         }
 }
@@ -211,16 +244,26 @@ void test_slt_instr()
 {      
         uint32_t instr = ((SLT >> 4) << 25) | (S0 << 20) | (S1 << 15) | ((SLT & 0x7) << 12) | (S0 << 7) | R_TYPE;
         uint32_t instructions[] = {instr};
+        uint8_t neg = 0;
 
         for (size_t i = 0; i < 100; i++) {
-                cpu.gpr[S0] = (int32_t) rand();
-                cpu.gpr[S1] = (int32_t) rand();
-                uint32_t res = cpu.gpr[S1] < cpu.gpr[S0] ? 1 : 0;
+                uint32_t num_s1 = rand();
+                uint32_t num_s0 = rand();
+
+                if (neg) {
+                        num_s1 |= 1 << 31;
+                }
+                
+                cpu.gpr[S0] = num_s0;
+                cpu.gpr[S1] = num_s1;
+                
+                uint32_t res = (int32_t) cpu.gpr[S1] < (int32_t) cpu.gpr[S0] ? 1 : 0;
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
                 cpu_start(&cpu);
 
+                neg ^= 1;
                 TEST_ASSERT_EQUAL(res, cpu.gpr[S0]);
         }
 }
