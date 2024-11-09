@@ -40,23 +40,38 @@ void tearDown(void)
 */
 void test_addi_instr()
 {
-        uint32_t rand_num = ((uint32_t) rand()) & 0xfff;
-
-        uint32_t instr = (rand_num << 20) | (S1 << 15) | (ADDI << 12) | (S0 << 7) | I_TYPE;
+        uint16_t rand_num = 0;
+        uint32_t instr = 0;
         uint32_t instructions[] = {instr};
+        uint8_t neg = 0;
 
         for (size_t i = 0; i < 100; i++) {
                 cpu.gpr[S1] = (uint32_t) rand();
-                rand_num = ((uint32_t) rand()) & 0xfff;
-                instr = (rand_num << 20) | (S1 << 15) | (ADDI << 12) | (S0 << 7) | I_TYPE;
+
+                // generate random 12 bit signed number
+                rand_num = ((uint16_t) rand()) & 0x7ff;
+
+                // if negative set sign bit (12)
+                uint16_t num_to_load = rand_num;
+                if (neg) {
+                        num_to_load |= 1 << 11;
+                }
+
+                instr = ((num_to_load & 0xfff) << 20) | (S1 << 15) | (ADDI << 12) | (S0 << 7) | I_TYPE;
                 instructions[0] = instr;
 
-                uint32_t res = cpu.gpr[S1] + rand_num;
+                uint32_t res = cpu.gpr[S1];
+                if (neg) {
+                        res -= rand_num;
+                } else {
+                        res += rand_num;
+                }
 
                 cpu.pc = RAM_INSTRUCTION_ADDR;
                 instructions_store(cpu.ram, instructions, 1);
                 cpu_start(&cpu);
-
+                
+                neg ^= 1;
                 TEST_ASSERT_EQUAL(res, cpu.gpr[S0]);
         }
 }
@@ -64,6 +79,7 @@ void test_addi_instr()
 
 int main()
 {
+        srand(time(NULL));
         UNITY_BEGIN();
         RUN_TEST(test_addi_instr);
         return UNITY_END();

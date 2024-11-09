@@ -89,7 +89,17 @@ static void _sltu_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _addi_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] + (int32_t) instr->imm);
+        uint16_t num = instr->imm;
+        uint32_t result = (int32_t) cpu->gpr[instr->rs1];
+
+        // minus if sign bit set else plus
+        if (num >> 11 & 1) {
+                result -= (num & 0x7ff);
+        } else {
+                result += (num & 0x7ff);
+        }
+
+        cpu->gpr[instr->rd] = result;
         #ifdef DEBUG
         printf("addi\n");
         #endif
