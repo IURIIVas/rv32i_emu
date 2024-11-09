@@ -153,7 +153,17 @@ static void _srli_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _srai_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = (uint32_t) ((int32_t) cpu->gpr[instr->rs1] >> (int32_t) (instr->imm & 0x1f));
+        uint32_t rs_1 = cpu->gpr[instr->rs1];
+        uint32_t shamt = (instr->imm & 0x1f);
+        
+        uint8_t sign_bit = (rs_1 >> 31) & 1;
+
+        uint32_t rd = rs_1 >> shamt;
+        if (sign_bit) {
+                rd |= 1 << 31;
+        }
+
+        cpu->gpr[instr->rd] = rd;
         #ifdef DEBUG
         printf("srai\n");
         #endif
@@ -161,7 +171,22 @@ static void _srai_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _slti_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = (cpu->gpr[instr->rs1] < instr->imm) ? 1 : 0;
+        uint32_t rs_1 = cpu->gpr[instr->rs1];
+        
+        int32_t imm = instr->imm;
+        if ((imm >> 11) & 1) {
+                imm = 0xfff - imm;
+                imm = -imm;
+        }
+
+        int32_t rs_1_signed = rs_1;
+        if ((rs_1 >> 31) & 1) {
+                rs_1_signed = 0xffffffff - rs_1;
+                rs_1_signed = -rs_1_signed;
+        }
+        uint32_t rd = (rs_1_signed < imm) ? 1 : 0;;
+
+        cpu->gpr[instr->rd] = rd;
         #ifdef DEBUG
         printf("slti\n");
         #endif
@@ -415,7 +440,7 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                         _slli_exec(cpu, instr);
                                         break;
                                 case SRI:
-                                        uint32_t sri_type = ((instr->imm >> 5) & 0x7f) << 4 | i_type_instr;
+                                        uint32_t sri_type = ((instr->imm >> 7) & 0x7f) << 4 | i_type_instr;
                                         switch (sri_type)
                                         {
                                                 case SRLI:
@@ -427,6 +452,7 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                                  default:
                                                         break;
                                         }
+                                        break;
                                 case SLTI:
                                         _slti_exec(cpu, instr);
                                         break;

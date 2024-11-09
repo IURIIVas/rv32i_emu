@@ -38,7 +38,7 @@ typedef enum i_type_instruction_e {
         SLLI = 0x1,
         SRI = 0x5,
         SRLI = 0x5,
-        SRAI = 0x205,
+        SRAI = 0x85,
         SLTI = 0x2,
         SLTUI = 0x3
 } i_type_instruction_e;
