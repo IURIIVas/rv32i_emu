@@ -36,6 +36,7 @@ typedef enum i_type_instruction_e {
         ORI = 0x6,
         ANDI = 0x7,
         SLLI = 0x1,
+        SRI = 0x5,
         SRLI = 0x5,
         SRAI = 0x205,
         SLTI = 0x2,
@@ -72,7 +73,7 @@ typedef struct instruction_s {
         uint8_t rs1;
         uint8_t rs2;
         uint8_t funct_7;
-        uint8_t imm;
+        uint16_t imm;
 } instruction_s;
 
 #endif 

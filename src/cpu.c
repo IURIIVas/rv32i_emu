@@ -381,7 +381,7 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                         }
                         break;
                 case I_TYPE:
-                        i_type_instruction_e i_type_instr = ((instr->imm >> 5) & 0x7f) << 4 | (instr->funct_3);
+                        i_type_instruction_e i_type_instr = (instr->funct_3);
                         switch (i_type_instr) {
                                 case ADDI:
                                         _addi_exec(cpu, instr);
@@ -398,12 +398,19 @@ static void _instruction_exec(cpu_s *cpu, instruction_s *instr)
                                 case SLLI:
                                         _slli_exec(cpu, instr);
                                         break;
-                                case SRLI:
-                                        _srli_exec(cpu, instr);
-                                        break;
-                                case SRAI:
-                                        _srai_exec(cpu, instr);
-                                        break;
+                                case SRI:
+                                        uint32_t sri_type = ((instr->imm >> 5) & 0x7f) << 4 | i_type_instr;
+                                        switch (sri_type)
+                                        {
+                                                case SRLI:
+                                                        _srli_exec(cpu, instr);
+                                                        break;
+                                                case SRAI:
+                                                        _srai_exec(cpu, instr);
+                                                        break;
+                                                 default:
+                                                        break;
+                                        }
                                 case SLTI:
                                         _slti_exec(cpu, instr);
                                         break;
