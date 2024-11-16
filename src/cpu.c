@@ -247,7 +247,7 @@ static void _lhu_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _sb_exec(cpu_s *cpu, instruction_s *instr)
 {
-        ram_store(cpu->ram, (instr->rs1 + instr->imm), BYTE, instr->rs2);
+        ram_store(cpu->ram, (cpu->gpr[instr->rs1]+ instr->imm), BYTE, cpu->gpr[instr->rs2]);
 
         #ifdef DEBUG
         printf("sb\n");
@@ -256,7 +256,7 @@ static void _sb_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _sh_exec(cpu_s *cpu, instruction_s *instr)
 {
-        ram_store(cpu->ram, (instr->rs1 + instr->imm), HALF_WORD, instr->rs2);
+        ram_store(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), HALF_WORD, cpu->gpr[instr->rs2]);
 
         #ifdef DEBUG
         printf("sh\n");
@@ -265,7 +265,7 @@ static void _sh_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _sw_exec(cpu_s *cpu, instruction_s *instr)
 {
-        ram_store(cpu->ram, (instr->rs1 + instr->imm), WORD, instr->rs2);
+        ram_store(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), WORD, cpu->gpr[instr->rs2]);
 
         #ifdef DEBUG
         printf("sw\n");

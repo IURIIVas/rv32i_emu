@@ -39,6 +39,9 @@ test_rtype: $(OBJ) $(UNITY_OBJ) $(ODIR)/test_rtype_instr.o
 test_itype: $(OBJ) $(UNITY_OBJ) $(ODIR)/test_itype_instr.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
+test_load_store: $(OBJ) $(UNITY_OBJ) $(ODIR)/test_load_store_instr.o
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
 riscv_emu: $(OBJ) $(ODIR)/main.o
 	$(CC) $(CFLAGS) -o $@ $^  $(LIBS)
 
