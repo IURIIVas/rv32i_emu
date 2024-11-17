@@ -140,6 +140,164 @@ void test_sw_instr()
         }
 }
 
+/*
+*     x[rd] = sext(M[x[rs1] + sext(offset)][7:0])
+*/
+void test_lb_instr()
+{      
+        uint32_t instr = 0;
+        uint32_t instructions[] = {instr};
+
+        printf("      ADDR:        MEM;        EXP\n");
+        for (size_t i = 0; i < 100; i++) {
+                uint16_t offset = rand() & 0xfff;
+                uint32_t mem_val = rand();
+                uint32_t base = (rand() % 0x7f00) | RAM_DATA_ADDR;
+                
+                instr = (offset << 20) | (S1 << 15) | (LB << 12) | (S0 << 7) | LOAD;
+                instructions[0] = instr;
+
+                cpu.gpr[S1] = base;
+                cpu.ram->mem[base + offset - RAM_START_ADDR] = mem_val & 0xff;
+
+                cpu.pc = RAM_INSTRUCTION_ADDR;
+                instructions_store(cpu.ram, instructions, 1);
+                cpu_start(&cpu);
+
+                uint32_t mem_extended_val = _sign_extend((uint8_t) (mem_val & 0xff), BYTE);
+                printf("0x%x: 0x%08x; 0x%08x\n", base + offset, cpu.gpr[S0], mem_extended_val);
+                TEST_ASSERT_EQUAL(mem_extended_val, cpu.gpr[S0]);
+        }
+}
+
+/*
+*     x[rd] = sext(M[x[rs1] + sext(offset)][7:0])
+*/
+void test_lbu_instr()
+{      
+        uint32_t instr = 0;
+        uint32_t instructions[] = {instr};
+
+        printf("      ADDR:        MEM;        EXP\n");
+        for (size_t i = 0; i < 100; i++) {
+                uint16_t offset = rand() & 0xfff;
+                uint32_t mem_val = rand();
+                uint32_t base = (rand() % 0x7f00) | RAM_DATA_ADDR;
+                
+                instr = (offset << 20) | (S1 << 15) | (LBU << 12) | (S0 << 7) | LOAD;
+                instructions[0] = instr;
+
+                cpu.gpr[S1] = base;
+                cpu.ram->mem[base + offset - RAM_START_ADDR] = mem_val & 0xff;
+
+                cpu.pc = RAM_INSTRUCTION_ADDR;
+                instructions_store(cpu.ram, instructions, 1);
+                cpu_start(&cpu);
+
+                uint32_t mem_extended_val = (uint8_t) (mem_val & 0xff);
+                printf("0x%x: 0x%08x; 0x%08x\n", base + offset, cpu.gpr[S0], mem_extended_val);
+                TEST_ASSERT_EQUAL(mem_extended_val, cpu.gpr[S0]);
+        }
+}
+
+/*
+*     x[rd] = sext(M[x[rs1] + sext(offset)][15:0])
+*/
+void test_lh_instr()
+{      
+        uint32_t instr = 0;
+        uint32_t instructions[] = {instr};
+
+        printf("      ADDR:        MEM;        EXP\n");
+        for (size_t i = 0; i < 100; i++) {
+                uint16_t offset = rand() & 0xfff;
+                uint32_t mem_val = rand();
+                uint32_t base = (rand() % 0x7f00) | RAM_DATA_ADDR;
+                
+                instr = (offset << 20) | (S1 << 15) | (LH << 12) | (S0 << 7) | LOAD;
+                instructions[0] = instr;
+
+                cpu.gpr[S1] = base;
+                cpu.ram->mem[base + offset - RAM_START_ADDR] = mem_val & 0xff;
+                cpu.ram->mem[base + offset - RAM_START_ADDR + 1] = (mem_val >> 8) & 0xff;
+
+                cpu.pc = RAM_INSTRUCTION_ADDR;
+                instructions_store(cpu.ram, instructions, 1);
+                cpu_start(&cpu);
+
+                uint32_t mem_extended_val = _sign_extend((mem_val & 0xffff), HALF_WORD);
+                printf("0x%x: 0x%08x; 0x%08x\n", base + offset, cpu.gpr[S0], mem_extended_val);
+                TEST_ASSERT_EQUAL(mem_extended_val, cpu.gpr[S0]);
+        }
+}
+
+/*
+*     x[rd] = M[x[rs1] + sext(offset)][15:0]
+*/
+void test_lhu_instr()
+{      
+        uint32_t instr = 0;
+        uint32_t instructions[] = {instr};
+
+        printf("      ADDR:        MEM;        EXP\n");
+        for (size_t i = 0; i < 100; i++) {
+                uint16_t offset = rand() & 0xfff;
+                uint32_t mem_val = rand();
+                uint32_t base = (rand() % 0x7f00) | RAM_DATA_ADDR;
+                
+                instr = (offset << 20) | (S1 << 15) | (LHU << 12) | (S0 << 7) | LOAD;
+                instructions[0] = instr;
+
+                cpu.gpr[S1] = base;
+                cpu.ram->mem[base + offset - RAM_START_ADDR] = mem_val & 0xff;
+                cpu.ram->mem[base + offset - RAM_START_ADDR + 1] = (mem_val >> 8) & 0xff;
+
+                cpu.pc = RAM_INSTRUCTION_ADDR;
+                instructions_store(cpu.ram, instructions, 1);
+                cpu_start(&cpu);
+
+                uint32_t mem_extended_val = mem_val & 0xffff;
+                printf("0x%x: 0x%08x; 0x%08x\n", base + offset, cpu.gpr[S0], mem_extended_val);
+                TEST_ASSERT_EQUAL(mem_extended_val, cpu.gpr[S0]);
+        }
+}
+
+
+/*
+*     x[rd] = sext(M[x[rs1] + sext(offset)][31:0])
+*/
+void test_lw_instr()
+{      
+        uint32_t instr = 0;
+        uint32_t instructions[] = {instr};
+
+        printf("      ADDR:        MEM;        EXP\n");
+        for (size_t i = 0; i < 100; i++) {
+                uint16_t offset = rand() & 0xfff;
+                uint32_t mem_val = rand();
+                uint32_t base = (rand() % 0x7f00) | RAM_DATA_ADDR;
+                
+                instr = (offset << 20) | (S1 << 15) | (LW << 12) | (S0 << 7) | LOAD;
+                instructions[0] = instr;
+
+                cpu.gpr[S1] = base;
+                cpu.ram->mem[base + offset - RAM_START_ADDR] = mem_val & 0xff;
+                cpu.ram->mem[base + offset - RAM_START_ADDR + 1] = (mem_val >> 8) & 0xff;
+                cpu.ram->mem[base + offset - RAM_START_ADDR + 2] = (mem_val >> 16) & 0xff;
+                cpu.ram->mem[base + offset - RAM_START_ADDR + 3] = (mem_val >> 24) & 0xff;
+
+                cpu.pc = RAM_INSTRUCTION_ADDR;
+                instructions_store(cpu.ram, instructions, 1);
+                cpu_start(&cpu);
+
+                uint32_t mem_extended_val = mem_val;
+                printf("0x%x: 0x%08x; 0x%08x\n", base + offset, cpu.gpr[S0], mem_extended_val);
+                TEST_ASSERT_EQUAL(mem_extended_val, cpu.gpr[S0]);
+        }
+}
+
+
+
 int main()
 {
         srand(time(NULL));
@@ -147,5 +305,10 @@ int main()
         RUN_TEST(test_sb_instr);
         RUN_TEST(test_sh_instr);
         RUN_TEST(test_sw_instr);
+        RUN_TEST(test_lb_instr);
+        RUN_TEST(test_lbu_instr);
+        RUN_TEST(test_lh_instr);
+        RUN_TEST(test_lhu_instr);
+        RUN_TEST(test_lw_instr);
         return UNITY_END();
 }

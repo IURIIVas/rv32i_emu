@@ -202,7 +202,7 @@ static void _sltui_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _lb_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = (int32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), BYTE);
+        cpu->gpr[instr->rd] = _sign_extend(ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), BYTE), BYTE);
         
         #ifdef DEBUG
         printf("lb\n");
@@ -211,7 +211,7 @@ static void _lb_exec(cpu_s *cpu, instruction_s *instr)
 
 static void _lh_exec(cpu_s *cpu, instruction_s *instr)
 {
-        cpu->gpr[instr->rd] = (int32_t) ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), HALF_WORD);
+        cpu->gpr[instr->rd] = _sign_extend(ram_load(cpu->ram, (cpu->gpr[instr->rs1] + instr->imm), HALF_WORD), HALF_WORD);
         
         #ifdef DEBUG
         printf("lh\n");

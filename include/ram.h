@@ -31,6 +31,27 @@ typedef enum data_size_e {
         WORD = 32
 } data_size_e;
 
+static inline uint32_t _sign_extend(uint32_t val, data_size_e data_size)
+{
+        if ((val >> (data_size - 1)) & 1) {
+                uint32_t base_val = 0;
+                switch (data_size)
+                {
+                case BYTE:
+                        base_val = 0xFFFFFF00;
+                        break;
+                case HALF_WORD:
+                        base_val = 0xFFFF0000;
+                        break;                
+                default:
+                        break;
+                }
+                return base_val | val;
+        }
+        else
+                return (uint32_t) val;
+}
+
 typedef struct ram_s {
         uint8_t mem[RAM_SIZE_BYTES];
 } ram_s;
